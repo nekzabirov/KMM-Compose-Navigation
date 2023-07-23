@@ -1,5 +1,7 @@
 package com.nekzabirov.navigatio.common.state
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
@@ -8,14 +10,15 @@ import androidx.compose.ui.Modifier
 import com.nekzabirov.navigatio.common.host.NavDestination
 import com.nekzabirov.navigatio.common.argument.Bundle
 
-internal class NavBackState(
+public class NavBackState(
     private val route: String,
-    val destination: NavDestination,
+    public val destination: NavDestination,
 ) {
-    var parent: NavBackState? = null
+    public var parent: NavBackState? = null
+        internal set
 
-    val enterAnimation = destination.enterAnimation
-    val exitAnimation = destination.exitAnimation
+    public val enterAnimation: EnterTransition? = destination.enterAnimation
+    public val exitAnimation: ExitTransition? = destination.exitAnimation
 
     private val bundle = Bundle().apply {
         val proceedArgs = processArguments(route.let { if (it.endsWith("/")) it else "$it/" })
@@ -57,7 +60,7 @@ internal class NavBackState(
     }
 
     @Composable
-    operator fun invoke() = Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+    internal operator fun invoke() = Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
         destination.content(bundle)
     }
 

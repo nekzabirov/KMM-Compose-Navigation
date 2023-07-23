@@ -26,14 +26,12 @@ public fun NavHost(
         NavigationGraph().apply(navigationGraphBuilder)
     }
 
-    var currentNavBackState by remember(startRoute) {
-        mutableStateOf(
-            NavBackState(
-                startRoute,
-                destination = navigationGraph.findDestinations(startRoute)!!
-            )
-        )
-    }
+    val currentNavBackState by remember(startRoute) {
+        navigationController.currentNavBackState
+    }.collectAsState(NavBackState(
+        startRoute,
+        destination = navigationGraph.findDestinations(startRoute)!!
+    ))
 
     AnimatedContent(
         targetState = currentNavBackState,
@@ -49,7 +47,7 @@ public fun NavHost(
     LaunchedEffect(navigationGraph) {
         navigationController.onNavigateRoute
             .onEach {
-                currentNavBackState = if (it is NavigateRoute.Destination) {
+                val currentNavBackState = if (it is NavigateRoute.Destination) {
                     val parent = if (it.option.launchSingleTop)
                         null
                     else if (it.option.finish)
@@ -76,6 +74,8 @@ public fun NavHost(
 
                     currentNavBackState.parent!!
                 }
+
+                navigationController._currentNavBackState.send(currentNavBackState)
             }
             .launchIn(this)
     }

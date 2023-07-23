@@ -13,6 +13,9 @@ public class NavigationController internal constructor(){
     private val _onNavigateRoute = Channel<NavigateRoute>(Channel.BUFFERED)
     internal val onNavigateRoute: Flow<NavigateRoute> = _onNavigateRoute.receiveAsFlow()
 
+    internal val _currentNavBackState = Channel<NavBackState>(Channel.BUFFERED)
+    public val currentNavBackState: Flow<NavBackState> = _currentNavBackState.receiveAsFlow()
+
     public fun navigate(route: String, builder: NavigationOptionBuilder.() -> Unit = {}) {
         _onNavigateRoute.trySend(
             NavigateRoute.Destination(
