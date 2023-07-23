@@ -1,4 +1,4 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.state
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

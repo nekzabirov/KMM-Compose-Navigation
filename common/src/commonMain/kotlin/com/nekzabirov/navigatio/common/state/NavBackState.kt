@@ -1,10 +1,11 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.state
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.nekzabirov.navigatio.common.host.NavDestination
 import com.nekzabirov.navigatio.common.argument.Bundle
 
 internal class NavBackState(

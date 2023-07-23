@@ -1,4 +1,4 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.state
 
 internal sealed interface NavigateRoute {
     data class Destination(val route: String, val option: NavigationOption) : NavigateRoute

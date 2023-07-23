@@ -1,4 +1,4 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.host
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

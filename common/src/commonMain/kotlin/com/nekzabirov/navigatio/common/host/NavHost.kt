@@ -1,19 +1,17 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.host
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.delay
+import com.nekzabirov.navigatio.common.state.NavBackState
+import com.nekzabirov.navigatio.common.state.NavigateRoute
+import com.nekzabirov.navigatio.common.state.NavigationController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 @Composable
 public fun NavHost(

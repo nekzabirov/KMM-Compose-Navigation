@@ -18,6 +18,4 @@ pluginManagement {
 
 rootProject.name = "navigation"
 
-include(":android")
-include(":desktop")
 include(":common")

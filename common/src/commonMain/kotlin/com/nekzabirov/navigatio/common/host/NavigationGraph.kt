@@ -1,13 +1,8 @@
-package com.nekzabirov.navigatio.common
+package com.nekzabirov.navigatio.common.host
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import com.nekzabirov.navigatio.common.argument.Bundle
 import com.nekzabirov.navigatio.common.argument.NamedNavArgument
 
