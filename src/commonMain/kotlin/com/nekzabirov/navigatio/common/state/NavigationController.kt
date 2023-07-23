@@ -1,10 +1,15 @@
 package com.nekzabirov.navigatio.common.state
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
-public class NavigationController {
+@Composable
+public fun rememberNavController(): NavigationController = remember { NavigationController() }
+
+public class NavigationController internal constructor(){
     private val _onNavigateRoute = Channel<NavigateRoute>(Channel.BUFFERED)
     internal val onNavigateRoute: Flow<NavigateRoute> = _onNavigateRoute.receiveAsFlow()
 
