@@ -1,19 +1,92 @@
 group = "com.nekzabirov.navigatio"
 version = "1.0-SNAPSHOT"
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    }
+plugins {
+    kotlin("multiplatform")
+    id("org.jetbrains.compose")
+    id("com.android.library")
 }
 
-plugins {
-    kotlin("jvm") apply false
-    kotlin("multiplatform") apply false
-    kotlin("android") apply false
-    id("com.android.application") apply false
-    id("com.android.library") apply false
-    id("org.jetbrains.compose") apply false
+repositories {
+    google()
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
+
+@OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+kotlin {
+    androidTarget()
+    jvm("desktop")
+    ios()
+    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
+        it.binaries {
+            framework {
+                baseName = "common"
+                isStatic = true
+            }
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(compose.runtime)
+                api(compose.ui)
+                api(compose.foundation)
+                api(compose.materialIconsExtended)
+                api(compose.material3)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                api("androidx.appcompat:appcompat:1.6.1")
+                api("androidx.core:core-ktx:1.10.1")
+            }
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                api(compose.preview)
+            }
+        }
+
+        val desktopTest by getting
+
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by getting {
+            dependencies {
+
+            }
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+    }
+
+    explicitApi()
+
+    jvmToolchain(17)
+}
+
+android {
+    namespace = "com.nekzabirov.navigatio.common"
+
+    compileSdk = 34
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    defaultConfig {
+        minSdk = 24
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
