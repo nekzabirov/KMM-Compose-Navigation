@@ -1,0 +1,17 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml:2:1-113
+INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml:2:1-113
+	package
+		ADDED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml:2:70-111
+		INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml:2:11-69
+uses-sdk
+INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml
+INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/nekbakhtzabirov/Documents/GammaChat/navigation/src/androidMain/AndroidManifest.xml
