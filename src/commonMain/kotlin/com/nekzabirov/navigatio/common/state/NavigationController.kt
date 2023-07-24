@@ -41,7 +41,6 @@ public class NavigationController internal constructor() {
             }
         }
         else if (navigationOption.finish) _backStates.lastOrNull()
-        else if (navigationOption.launchSingleTop) null
         else _backStates.lastOrNull()
 
         if (navigationOption.launchSingleTop)
@@ -50,15 +49,22 @@ public class NavigationController internal constructor() {
         val navBackState = NavBackState(route, destination)
             .apply { this.parent = parent }
 
+        if (parent != null) {
+            val parentIdx = _backStates.indexOf(parent)
+
+            if (parentIdx < 0)
+                _backStates.add(parent)
+            else
+                _backStates.removeRange(parentIdx, _backStates.size)
+        }
+
         _backStates.add(navBackState)
     }
 
     public fun popBack() {
         if (_backStates.isEmpty()) return
 
-        val parent = _backStates.last().parent ?: return
-
-        _backStates.removeRange(_backStates.indexOf(parent) + 1, _backStates.size)
+        _backStates.removeLast()
     }
 
     private fun findDestination(route: String) = destinations

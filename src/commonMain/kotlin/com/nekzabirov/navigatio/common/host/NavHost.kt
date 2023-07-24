@@ -37,7 +37,6 @@ public fun NavHost(
         contentKey = { it.destination }
     ) { it() }
 
-
     DisposableEffect(navigationController) {
         NavigationGraph().apply(navigationGraphBuilder).also {
             navigationController.destinations = it.destinations
