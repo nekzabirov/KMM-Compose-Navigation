@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.nekzabirov.navigatio.common.host.NavDestination
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 public fun rememberNavController(): NavigationController = remember { NavigationController() }
@@ -19,12 +18,16 @@ public class NavigationController internal constructor() {
     public val backStates: List<NavBackState>
         get() = _backStates
 
+    private val _currentBackState = MutableStateFlow<NavBackState?>(null)
+    public val currentBackState: StateFlow<NavBackState?>
+        get() = _currentBackState
+
     public fun navigate(route: String, builder: NavigationOptionBuilder.() -> Unit = {}) {
         val navigationOption = NavigationOptionBuilder().apply(builder).build()
 
         val destination = findDestination(route) ?: return
 
-        val parent = if (navigationOption.popUpToRoute != null) {
+        /*val parent = if (navigationOption.popUpToRoute != null) {
             val backState = _backStates
                 .find { it.destination.routePattern.matches(navigationOption.popUpToRoute) }
 
@@ -41,28 +44,38 @@ public class NavigationController internal constructor() {
             }
         }
         else if (navigationOption.finish) _backStates.lastOrNull()
-        else _backStates.lastOrNull()
+        else _backStates.lastOrNull()*/
+
+        if (currentBackState.value != null)
+            _backStates.add(currentBackState.value!!)
 
         if (navigationOption.launchSingleTop)
             _backStates.clear()
+        else if (navigationOption.finish && _backStates.size > 1)
+            _backStates.removeRange(1, _backStates.size)
+        else if (navigationOption.popUpToRoute != null) {
+            val parentIdx = _backStates
+                .indexOfLast { it.destination.routePattern.matches(navigationOption.popUpToRoute) }
 
-        val navBackState = NavBackState(route, destination)
-            .apply { this.parent = parent }
-
-        if (parent != null) {
-            val parentIdx = _backStates.indexOf(parent)
-
-            if (parentIdx < 0)
-                _backStates.add(parent)
+            if (parentIdx >= 0)
+                _backStates.removeRange(parentIdx + 1, _backStates.size)
             else
-                _backStates.removeRange(parentIdx, _backStates.size)
+                findDestination(navigationOption.popUpToRoute)?.let {
+                    NavBackState(navigationOption.popUpToRoute, it)
+                }?.also { _backStates.add(it) }
         }
 
-        _backStates.add(navBackState)
+        val navBackState = NavBackState(route, destination).apply {
+            parent = _backStates.lastOrNull()
+        }
+
+        _currentBackState.value = (navBackState)
     }
 
     public fun popBack() {
         if (_backStates.isEmpty()) return
+
+        _currentBackState.value = (backStates.last())
 
         _backStates.removeLast()
     }
