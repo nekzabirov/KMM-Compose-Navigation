@@ -22,16 +22,9 @@ public fun NavHost(
     exitAnimation: ExitTransition = slideOutHorizontally(targetOffsetX = { width -> -width }),
     navigationGraphBuilder: NavigationGraph.() -> Unit
 ): Unit = Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-    val navigationGraph = remember(startRoute) {
-        NavigationGraph().apply(navigationGraphBuilder)
-    }
+    val backStates = remember { navigationController.backStates }
 
-    val currentNavBackState by remember(startRoute) {
-        navigationController.currentNavBackState
-    }.collectAsState(NavBackState(
-        startRoute,
-        destination = navigationGraph.findDestinations(startRoute)!!
-    ))
+    val currentNavBackState = backStates.last()
 
     AnimatedContent(
         targetState = currentNavBackState,
@@ -44,39 +37,12 @@ public fun NavHost(
         contentKey = { it.destination }
     ) { it() }
 
-    LaunchedEffect(navigationGraph) {
-        navigationController.onNavigateRoute
-            .onEach {
-                val currentNavBackState = if (it is NavigateRoute.Destination) {
-                    val parent = if (it.option.launchSingleTop)
-                        null
-                    else if (it.option.finish)
-                        currentNavBackState.parent
-                    else if (it.option.popUpToRoute != null)
-                        NavBackState(
-                            route = it.option.popUpToRoute,
-                            destination = navigationGraph.findDestinations(it.option.popUpToRoute)!!,
-                        ).apply {
-                            parent = currentNavBackState
-                        }
-                    else
-                        currentNavBackState
 
-                    NavBackState(
-                        it.route,
-                        destination = navigationGraph.findDestinations(it.route)!!,
-                    ).apply {
-                        this.parent = parent
-                    }
-                } else {
-                    if (currentNavBackState.parent == null)
-                        return@onEach
-
-                    currentNavBackState.parent!!
-                }
-
-                navigationController._currentNavBackState.send(currentNavBackState)
-            }
-            .launchIn(this)
+    DisposableEffect(navigationController) {
+        NavigationGraph().apply(navigationGraphBuilder).also {
+            navigationController.destinations = it.destinations
+        }
+        navigationController.navigate(startRoute)
+        onDispose {  }
     }
 }

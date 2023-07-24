@@ -7,10 +7,7 @@ import com.nekzabirov.navigatio.common.argument.Bundle
 import com.nekzabirov.navigatio.common.argument.NamedNavArgument
 
 public class NavigationGraph {
-    private val destinations = arrayListOf<NavDestination>()
-
-    internal fun findDestinations(route: String) = destinations
-        .findLast { it.routePattern.matches(route) }
+    internal val destinations = arrayListOf<NavDestination>()
 
     public fun composable(
         route: String,
