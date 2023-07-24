@@ -7,7 +7,7 @@ public class Bundle {
         data[key] = value
     }
 
-    public fun getString(key: String): String? = data[key] as String
+    public fun getString(key: String): String? = data[key] as? String
 
     public fun getInt(key: String): Int? = data[key] as? Int
 
