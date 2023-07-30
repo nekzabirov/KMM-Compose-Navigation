@@ -4,8 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,8 +23,8 @@ public fun NavHost(
     modifier: Modifier = Modifier.fillMaxSize(),
     navigationController: NavigationController,
     startRoute: String,
-    enterAnimation: EnterTransition = slideInHorizontally(initialOffsetX = { width -> -width }),
-    exitAnimation: ExitTransition = slideOutHorizontally(targetOffsetX = { width -> -width }),
+    enterAnimation: EnterTransition = fadeIn(),
+    exitAnimation: ExitTransition = fadeOut(),
     navigationGraphBuilder: NavigationGraph.() -> Unit
 ): Unit = Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
     val currentNavBackState by remember(navigationController) { navigationController.currentBackState }
