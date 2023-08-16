@@ -1,5 +1,5 @@
-group = "com.nekzabirov.navigatio"
-version = "1.0-SNAPSHOT"
+group = "com.nekzabirov"
+version = "1.0.0"
 
 plugins {
     kotlin("multiplatform")
@@ -94,7 +94,7 @@ publishing {
     publications {
         create<MavenPublication>("default") {
             from(components.getByName("kotlin"))
-            groupId = "com.nekzabirov"
+            groupId = group.toString()
             artifactId = "navigation"
             version = "1.0.0"
         }
