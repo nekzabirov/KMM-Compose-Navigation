@@ -5,12 +5,14 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
     id("com.android.library")
+    id("maven-publish")
 }
 
 repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    mavenLocal()
 }
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -85,5 +87,20 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("default") {
+            from(components.getByName("kotlin"))
+            groupId = "com.nekzabirov"
+            artifactId = "navigation"
+            version = "1.0.0"
+        }
+    }
+
+    repositories {
+        mavenLocal()
     }
 }
