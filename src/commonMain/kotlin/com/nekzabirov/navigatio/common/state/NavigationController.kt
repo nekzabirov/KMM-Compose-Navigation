@@ -22,6 +22,9 @@ public class NavigationController internal constructor() {
     public val currentBackState: StateFlow<NavBackState?>
         get() = _currentBackState
 
+
+    internal var onBackStateChange: ()->Unit = {}
+
     public fun navigate(route: String, builder: NavigationOptionBuilder.() -> Unit = {}) {
         val navigationOption = NavigationOptionBuilder().apply(builder).build()
 
@@ -70,6 +73,7 @@ public class NavigationController internal constructor() {
         }
 
         _currentBackState.value = (navBackState)
+        onBackStateChange()
     }
 
     public fun popBack() {
@@ -78,8 +82,10 @@ public class NavigationController internal constructor() {
         _currentBackState.value = (backStates.last())
 
         _backStates.removeLast()
+        onBackStateChange()
     }
 
     private fun findDestination(route: String) = destinations
         .findLast { it.routePattern.matches(route) }
+
 }
