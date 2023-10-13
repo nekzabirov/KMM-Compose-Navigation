@@ -16,7 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.nekzabirov.navigatio.common.backhandler.OnBackPressedDispatcher
+import com.nekzabirov.navigatio.common.backhandler.BackHandler
 import com.nekzabirov.navigatio.common.state.NavigationController
 
 
@@ -31,9 +31,8 @@ public fun NavHost(
 ): Unit = Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
     val currentNavBackState by remember(navigationController) { navigationController.currentBackState }
         .collectAsState(null)
-    val backHandler = remember { OnBackPressedDispatcher() }
 
-    backHandler.BackHandler(
+    BackHandler(
         enabled = currentNavBackState?.parent != null,
         onBack = { navigationController.popBack() }
     )
