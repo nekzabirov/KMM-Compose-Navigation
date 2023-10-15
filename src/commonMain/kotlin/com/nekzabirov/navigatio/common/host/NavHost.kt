@@ -16,7 +16,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.nekzabirov.navigatio.common.backhandler.BackHandler
 import com.nekzabirov.navigatio.common.state.NavigationController
+
 
 @Composable
 public fun NavHost(
@@ -30,6 +32,10 @@ public fun NavHost(
     val currentNavBackState by remember(navigationController) { navigationController.currentBackState }
         .collectAsState(null)
 
+    BackHandler(
+        enabled = currentNavBackState?.parent != null,
+        onBack = { navigationController.popBack() }
+    )
     AnimatedContent(
         targetState = currentNavBackState,
         transitionSpec = {
@@ -46,6 +52,6 @@ public fun NavHost(
             navigationController.destinations = it.destinations
         }
         navigationController.navigate(startRoute)
-        onDispose {  }
+        onDispose { }
     }
 }
