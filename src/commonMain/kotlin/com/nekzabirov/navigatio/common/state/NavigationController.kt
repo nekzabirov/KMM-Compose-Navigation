@@ -2,10 +2,15 @@ package com.nekzabirov.navigatio.common.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.nekzabirov.navigatio.common.host.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+
+
+@Composable
+public fun rememberNavController(): NavigationController = remember { NavigationController("") }
 
 @Composable
 public fun rememberNavController(key: Any): NavigationController {
