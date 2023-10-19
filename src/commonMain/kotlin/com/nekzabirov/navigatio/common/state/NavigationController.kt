@@ -8,10 +8,30 @@ import com.nekzabirov.navigatio.common.host.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-@Composable
-public fun rememberNavController(): NavigationController = remember { NavigationController() }
 
-public class NavigationController internal constructor() {
+@Composable
+public fun rememberNavController(): NavigationController = remember { NavigationController("") }
+
+@Composable
+public fun rememberNavController(key: Any): NavigationController {
+    val navControllerStore = LocalNavControllerStore.current
+    if (navControllerStore?.current?.key == key) {
+        return navControllerStore.current
+    }
+    if (navControllerStore == null) {
+        if (TopNavControllerStoreOwner.topNavControllerStore == null) {
+            TopNavControllerStoreOwner.topNavControllerStore =
+                NavControllerStore(NavigationController(key))
+        }
+        return TopNavControllerStoreOwner.topNavControllerStore?.current!!
+    }
+    if (navControllerStore.subNavControllers[key] == null) {
+        navControllerStore.subNavControllers[key] = NavControllerStore(NavigationController(key))
+    }
+    return navControllerStore.subNavControllers[key]!!.current
+}
+
+public class NavigationController internal constructor(public val key: Any) {
     internal var destinations: List<NavDestination> = emptyList()
 
     private val _backStates: SnapshotStateList<NavBackState> = mutableStateListOf()
@@ -22,8 +42,8 @@ public class NavigationController internal constructor() {
     public val currentBackState: StateFlow<NavBackState?>
         get() = _currentBackState
 
-
-    internal var onBackStateChange: ()->Unit = {}
+    private var onBackStateChange: () -> Unit = {}
+    internal val stateStore: NavigationStateStore = NavigationStateStore(this)
 
     public fun navigate(route: String, builder: NavigationOptionBuilder.() -> Unit = {}) {
         val navigationOption = NavigationOptionBuilder().apply(builder).build()
@@ -88,4 +108,44 @@ public class NavigationController internal constructor() {
     private fun findDestination(route: String) = destinations
         .findLast { it.routePattern.matches(route) }
 
+
+    public class NavigationStateStore internal constructor(private val navigationController: NavigationController) {
+
+        init {
+            navigationController.onBackStateChange = { invalidateStore() }
+        }
+
+        private var store: MutableMap<String, MutableMap<Any, Destructible>> = mutableMapOf()
+
+        public operator fun set(key: Any, value: Destructible) {
+            val currentRoute = navigationController.currentBackState.value?.destination?.route ?: ""
+            val storeForRoute = store.getOrPut(currentRoute) { mutableMapOf() }
+            storeForRoute[key] = value
+        }
+
+        public operator fun get(key: Any): Any? {
+            val currentRoute = navigationController.currentBackState.value?.destination?.route ?: ""
+            return store[currentRoute]?.get(key)?.value
+        }
+
+        private fun invalidateStore() {
+            val existingRoutes =
+                navigationController.backStates.map { it.destination.route } + navigationController.currentBackState.value?.destination?.route
+            val keysToRemove = store.keys.filter { it !in existingRoutes }
+            for (key in keysToRemove) {
+                store[key]?.values?.forEach { it.destructor?.invoke(it.value) }
+                store.remove(key)
+            }
+        }
+
+        public fun clear() {
+            store.values.forEach { it.values.forEach { it.destructor?.invoke(it.value) } }
+            store = mutableMapOf()
+        }
+    }
+
+    public data class Destructible(
+        public val value: Any?,
+        public val destructor: ((Any?) -> Unit)? = null
+    )
 }
