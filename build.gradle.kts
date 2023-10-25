@@ -1,4 +1,5 @@
 group = "com.nekzabirov"
+version = "1.0.4"
 
 plugins {
     kotlin("multiplatform")
@@ -96,7 +97,7 @@ publishing {
             from(components.getByName("kotlin"))
             groupId = group.toString()
             artifactId = "navigation"
-            version = "1.0.1"
+            version = "1.0.4"
         }
     }
 
