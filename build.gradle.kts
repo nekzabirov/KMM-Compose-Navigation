@@ -17,10 +17,18 @@ repositories {
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
-    androidTarget()
+    androidTarget {
+        publishAllLibraryVariants()
+    }
+
     jvm("desktop")
+
     ios()
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
         it.binaries {
             framework {
                 baseName = "common"
@@ -49,26 +57,14 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.10.1")
+                api("androidx.core:core-ktx:1.12.0")
                 api("androidx.activity:activity-compose:1.8.0")
             }
         }
 
-        val desktopMain by getting {
-            dependencies {
-                api(compose.preview)
-            }
-        }
-
-        val desktopTest by getting
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+        val iosMain by getting
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
         }
     }
 
@@ -82,9 +78,11 @@ android {
 
     compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+
     defaultConfig {
         minSdk = 24
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -97,7 +95,7 @@ publishing {
             from(components.getByName("kotlin"))
             groupId = group.toString()
             artifactId = "navigation"
-            version = "1.0.4"
+            version = project.version.toString()
         }
     }
 
@@ -109,8 +107,8 @@ publishing {
             url = uri("https://maven.pkg.github.com/nekzabirov/KMM-Compose-Navigation")
 
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.token") as String? ?: System.getenv("TOKEN")
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_FULL_TOKEN")
             }
         }
     }
